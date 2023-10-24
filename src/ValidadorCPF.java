@@ -1,97 +1,75 @@
-import java.util.InputMismatchException;
+import java.util.Scanner;
 
 public class ValidadorCPF {
+    public static void main(String[] args) {
+        System.out.println("Digite seu cpf (somente números): ");
+        Scanner tcd = new Scanner(System.in);
+        String cpf = tcd.nextLine();
 
-
-
-        public static boolean validarCPF(String cpf) {
-
-            // Remove caracteres não numéricos do CPF
-
-            cpf = cpf.replaceAll("[^0-9]", "");
-
-
-
-            // Verifica se o CPF possui 11 dígitos
-
-            if (cpf.length() != 11) {
-
-                return false;
-
-            }
-
-
-
-            // Calcula o primeiro dígito verificador
-
-            int soma = 0;
-
-            for (int i = 0; i < 9; i++) {
-
-                soma += Character.getNumericValue(cpf.charAt(i)) * (10 - i);
-
-            }
-
-            int primeiroDigito = 11 - (soma % 11);
-
-
-
-            // Se o primeiro dígito verificador for maior que 9, define-o como 0
-
-            if (primeiroDigito > 9) {
-
-                primeiroDigito = 0;
-
-            }
-
-
-
-            // Calcula o segundo dígito verificador
-
-            soma = 0;
-
-            for (int i = 0; i < 10; i++) {
-
-                soma += Character.getNumericValue(cpf.charAt(i)) * (11 - i);
-
-            }
-
-            int segundoDigito = 11 - (soma % 11);
-
-
-
-            // Se o segundo dígito verificador for maior que 9, define-o como 0
-
-            if (segundoDigito > 9) {
-
-                segundoDigito = 0;
-
-            }
-
-
-
-            // Verifica se os dígitos calculados correspondem aos dígitos originais do CPF
-
-            return cpf.charAt(9) - '0' == primeiroDigito && cpf.charAt(10) - '0' == segundoDigito;
-
+        if (Util.validaCPF(cpf)) {
+            System.out.println("CPF OK");
+        } else {
+            System.out.println("CPF Inválido!");
         }
 
-
-
-        public static void main(String[] args) {
-
-            String cpf = "123.456.789-09"; // Substitua pelo CPF que deseja validar
-
-            if (validarCPF(cpf)) {
-
-                System.out.println("CPF válido!");
-
-            } else {
-
-                System.out.println("CPF inválido!");
-
-            }
-
-        }
-
+        tcd.close();
     }
+
+    public static String cpf(String s) {
+
+        return s;
+    }
+}
+
+class Util {
+    public static boolean validaCPF(String cpf) {
+        int numero = 0;
+        int indice = 1;
+        int digito1 = 0;
+        int digito2 = 0;
+        int digito1Original = 0;
+        int digito2Original = 0;
+
+        try {
+            if (cpf.length() == 11) {
+                digito1Original = Integer.parseInt(String.valueOf(cpf.charAt(9)));
+                digito2Original = Integer.parseInt(String.valueOf(cpf.charAt(10)));
+
+                for (int i = 8; i >= 0; i--) {
+                    int itemCpf = Integer.parseInt(String.valueOf(cpf.charAt(i)));
+                    indice = indice + 1;
+                    numero = numero + (indice * itemCpf);
+                }
+                int resto = numero % 11;
+
+                if (resto < 2) {
+                    digito1 = 0;
+                } else {
+                    digito1 = 11 - resto;
+                }
+
+                if (digito1 == digito1Original) {
+                    numero = 0;
+                    indice = 1;
+                    for (int i = 9; i >= 0; i--) {
+                        int itemCpf = Integer.parseInt(String.valueOf(cpf.charAt(i)));
+                        indice = indice + 1;
+                        numero = numero + (indice * itemCpf);
+                    }
+                    resto = numero % 11;
+                    if (resto < 2)
+                        digito2 = 0;
+                    else
+                        digito2 = 11 - resto;
+
+                    if (digito2 == digito2Original)
+                        return true;
+                }
+            }
+        } catch (Exception e) {
+
+        }
+
+        return false;
+    }
+}
